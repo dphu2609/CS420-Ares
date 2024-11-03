@@ -3,7 +3,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtCore import Qt  # Import Qt for scaling options
 
 # Assuming ResourceHolder is a class that loads images
-from resource_holder import ResourceHolder
+from components.resource_holder import ResourceHolder
 
 class Block(QWidget):
     decoder = {

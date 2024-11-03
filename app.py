@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox
 import sys
 
-from resource_holder import ResourceHolder
+from components.resource_holder import ResourceHolder
 from components.map import VisualMap
 
 class App(QMainWindow):
@@ -56,8 +56,7 @@ class App(QMainWindow):
         self.layout.addWidget(self.start_button)
 
         self.central_widget.setLayout(self.layout)
-    
-    
+
     def choose_file(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
