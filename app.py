@@ -3,6 +3,7 @@ import sys
 
 from components.resource_holder import ResourceHolder
 from components.map import VisualMap
+from src.map_data import MapData
 
 class App(QMainWindow):
     def __init__(self):
@@ -10,6 +11,7 @@ class App(QMainWindow):
 
         self.resource_holder = ResourceHolder()
         self.resource_holder.load_images()
+        self.map_matrix = MapData()
 
         self.initUI()
 
@@ -57,6 +59,24 @@ class App(QMainWindow):
 
         self.central_widget.setLayout(self.layout)
 
+    def display_map(self, map_data):
+        # Remove the previous VisualMap widget if it exists
+        if self.visualization_map:
+            self.layout.removeWidget(self.visualization_map)
+            self.visualization_map.deleteLater()
+
+        # Set the dimensions for the VisualMap based on the current window size
+        total_width = self.width()
+        total_height = self.height()  # Subtract some space for other UI components
+
+        # Create a new VisualMap with the map data and calculated dimensions
+        self.visualization_map = VisualMap(map_data, total_width, total_height)
+
+        # Set the background color of VisualMap to white
+        self.visualization_map.setStyleSheet("background-color: white;")
+
+        self.layout.insertWidget(1, self.visualization_map)  # Insert after file button
+
     def choose_file(self):
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
@@ -65,29 +85,24 @@ class App(QMainWindow):
             if selected_files:  # Check if any files were selected
                 file_path = selected_files[0]
                 map_data = self.parse_map(file_path)
-
-                # Remove the previous VisualMap widget if it exists
-                if self.visualization_map:
-                    self.layout.removeWidget(self.visualization_map)
-                    self.visualization_map.deleteLater()
-
-                # Set the dimensions for the VisualMap based on the current window size
-                total_width = self.width()
-                total_height = self.height() - 150  # Subtract some space for other UI components
-
-                # Create a new VisualMap with the map data and calculated dimensions
-                self.visualization_map = VisualMap(map_data, total_width, total_height)
-
-                # Set the background color of VisualMap to white
-                self.visualization_map.setStyleSheet("background-color: white;")
-
-                self.layout.insertWidget(1, self.visualization_map)  # Insert after file button
+                self.display_map(map_data)
             else:
                 print("No file selected.")  # Optionally inform the user
 
     def parse_map(self, file_path):
+        content = []
         with open(file_path, "r") as file:
-            map_data = [list(line.strip()) for line in file]
+            content = file.readlines()
+
+        stones = list(map(int, content[0].split()))
+        map_data = [list(line.strip('\n')) for line in content[1:]]
+        # print(f"Map Data: {map_data}")
+
+        self.map_matrix.set_map_matrix(map_data, stones)
+
+        # print(f"Stones: {stones}")
+        # print(f"Map Data: {self.map_matrix.get_map_matrix()}")
+        # print(f"Stone Data: {self.map_matrix.get_stones()}")
         return map_data
     
     def start_visualization(self):
