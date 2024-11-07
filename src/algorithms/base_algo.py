@@ -13,3 +13,7 @@ class BaseAlgo(abc.ABC):
     @abc.abstractmethod
     def get_map(self) -> MapData:
         pass
+
+    @abc.abstractmethod
+    def get_path(self) -> list:
+        pass

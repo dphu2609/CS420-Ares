@@ -13,3 +13,6 @@ class UCS(BaseAlgo):
 
     def get_map(self) -> MapData:
         pass
+
+    def get_path(self) -> list:
+        pass
