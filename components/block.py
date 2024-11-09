@@ -39,3 +39,4 @@ class Block(QWidget):
         # Set fixed size for the Block widget and adjust QLabel size to fit
         self.setFixedSize(size, size)
         self.image_label.setFixedSize(size, size)
+ 
