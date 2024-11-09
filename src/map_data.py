@@ -80,7 +80,7 @@ class MapData:
         return self.map_matrix
     
     def get_stones(self):
-        return self.weigh_stones
+        return self.weigh_stones, self.position_stones
     
     def get_current_position(self):
         return self.current_position
@@ -105,18 +105,21 @@ class MapData:
         if self.map_matrix[next_x][next_y] == self.BLOCKER:
             return None
         
-        if self.map_matrix[next_x][next_y] > 0: # stone
+        if self.map_matrix[next_x][next_y] > 0 or self.map_matrix[next_x][next_y] == self.DONE_SWITCH: # stone
             if self.map_matrix[next_next_x][next_next_y] > 0 \
                 or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER \
                 or self.map_matrix[next_next_x][next_next_y] == self.DONE_SWITCH:
                 return None
             
             if self.map_matrix[next_next_x][next_next_y] == self.SPACE:
+                print(f"Stone at ({next_x}, {next_y})")
                 if self.map_matrix[next_x][next_y] > 0:
                     self.map_matrix[next_next_x][next_next_y] = self.map_matrix[next_x][next_y]
                 elif self.map_matrix[next_x][next_y] == self.DONE_SWITCH:
                     # find stone at (next_x, next_y) using find function
                     index = self.position_stones.index((next_x, next_y))
+                    print(f"Index: {index}")
+                    print(f"Position: {self.position_stones[index]}")
                     self.map_matrix[next_next_x][next_next_y] = index
 
             elif self.map_matrix[next_next_x][next_next_y] == self.SWITCH:
