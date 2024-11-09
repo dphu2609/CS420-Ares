@@ -149,8 +149,12 @@ class App(QMainWindow):
             astar.set_map(self.map_data.copy())
             astar.run()
             path, maps, total_w = astar.get_path()
+            time_consumed, mem_consumed, num_explored = astar.get_stats()
             print(f"Path: {path}")
             print(f"Total weight: {total_w}")
+            print(f"Time consumed: {time_consumed} seconds")
+            print(f"Memory consumed: {mem_consumed} MB")
+            print(f"Number of explored nodes: {num_explored}")
 
             self.push_moves(path)
             QTimer.singleShot(0, self.run_moves)

@@ -2,7 +2,7 @@ from .base_algo import BaseAlgo
 from ..map_data import MapData
 from .heuristic_utils import hungarian_algorithm, convert_map_to_cost_matrix
 
-import heapq, sys
+import heapq, sys, time, psutil
 
 class Node:
     def __init__(self, current, parent=None):
@@ -22,6 +22,9 @@ class AStar(BaseAlgo):
         self.game_state_dict = {} # map hash value to game state
         self.node_dict = {} # map hash value to node
 
+        self.time_consumed = 0
+        self.memory_consumed = 0
+
     # Should copy a new map
     def set_map(self, map: MapData):
         self.map = map
@@ -30,6 +33,8 @@ class AStar(BaseAlgo):
         return hungarian_algorithm(convert_map_to_cost_matrix(map)) == 0
 
     def run(self) -> bool:
+        start_time = time.time()
+        self.memory_consumed = psutil.Process().memory_info().rss / 1024 / 1024 # in MB
         self.game_state_dict = {} # map hash value to game state
         self.node_dict = {} # map hash value to node
         open_list = []
@@ -54,6 +59,8 @@ class AStar(BaseAlgo):
 
             if self.is_goal(self.game_state_dict[hash_current]):
                 self.goal_hash = hash_current
+                self.time_consumed = time.time() - start_time
+                self.memory_consumed = psutil.Process().memory_info().rss / 1024 / 1024 - self.memory_consumed
                 return True
 
             # print current map
@@ -108,3 +115,6 @@ class AStar(BaseAlgo):
             current = self.node_dict[current].parent.current
 
         return path[::-1], maps[::-1], self.node_dict[self.goal_hash].g
+    
+    def get_stats(self):
+        return self.time_consumed, self.memory_consumed, len(self.node_dict)
