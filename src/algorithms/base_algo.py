@@ -1,5 +1,5 @@
 import abc
-from ..map_data import MapData
+from src.map_data import MapData
 
 class BaseAlgo(abc.ABC):
     @abc.abstractmethod
