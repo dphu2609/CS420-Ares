@@ -79,6 +79,9 @@ class MapData:
     def get_stones(self):
         return self.stones
     
+    def get_current_position(self):
+        return self.current_position
+    
     def copy(self) -> 'MapData':
         new_map = MapData()
         new_map.set_map_matrix(self.map_matrix, self.stones)
