@@ -41,7 +41,7 @@ class BFS(BaseAlgo):
 
         self.distances_matrix = [[float('inf') for _ in range(len(self.map_matrix[0]))] for _ in range(len(self.map_matrix))]
         self.cost_matrix = [[0 for _ in range(len(self.stones_positions_weight))] for _ in range(len(self.switches_positions))]
-        self.initial_state = (current_position, stone_positions, self.switches_positions)
+        self.initial_state = (current_position, self.stone_positions, self.switches_positions)
 
     def bfs(self, stone):
         queue = deque([stone])
