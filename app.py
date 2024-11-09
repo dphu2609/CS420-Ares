@@ -1,10 +1,12 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox
-import sys
+import sys, collections
 
 from components.resource_holder import ResourceHolder
 from components.map import VisualMap
 from src.map_data import MapData
 from src.algorithms.base_algo import BaseAlgo
+
+from PyQt6.QtCore import QTimer
 
 class App(QMainWindow):
     def __init__(self):
@@ -14,7 +16,11 @@ class App(QMainWindow):
         self.resource_holder.load_images()
         self.map_data = MapData()
 
+        self.moves = collections.deque()
+
         self.initUI()
+
+        # self.test_move()
 
     def initUI(self):
         self.setWindowTitle("Algorithm Visualization")
@@ -62,9 +68,10 @@ class App(QMainWindow):
 
     def display_map(self):
         # Remove the previous VisualMap widget if it exists
-        if self.visualization_map:
-            self.layout.removeWidget(self.visualization_map)
+        if self.visualization_map is not None:
+            self.central_widget.layout().removeWidget(self.visualization_map)
             self.visualization_map.deleteLater()
+            self.visualization_map = None
 
         # Set the dimensions for the VisualMap based on the current window size
         total_width = self.width()
@@ -72,11 +79,17 @@ class App(QMainWindow):
 
         # Create a new VisualMap with the map data and calculated dimensions
         self.visualization_map = VisualMap(self.map_data, total_width, total_height)
+        self.central_widget.layout().addWidget(self.visualization_map)
 
         # Set the background color of VisualMap to white
         self.visualization_map.setStyleSheet("background-color: white;")
 
         self.layout.insertWidget(1, self.visualization_map)  # Insert after file button
+
+        self.visualization_map.update()
+        self.update()
+
+        print("Map displayed")
 
     def choose_file(self):
         file_dialog = QFileDialog()
@@ -87,6 +100,9 @@ class App(QMainWindow):
                 file_path = selected_files[0]
                 self.parse_map(file_path)
                 self.display_map()
+                
+                self.push_moves(['r', 'u', 'd', 'l', 'l'])
+                QTimer.singleShot(1000, self.run_moves)
             else:
                 print("No file selected.")  # Optionally inform the user
 
@@ -99,6 +115,19 @@ class App(QMainWindow):
         map_data = [list(line.strip('\n')) for line in content[1:]]
 
         self.map_data.set_map_matrix(map_data, stones)
+
+    def push_moves(self, moves_list: list):
+        self.moves.extend(moves_list)
+
+    def run_moves(self):
+        if len(self.moves) == 0:
+            return
+
+        move = self.moves.popleft()
+        self.map_data.move(move)
+        self.display_map()
+
+        QTimer.singleShot(1000, self.run_moves)
     
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
