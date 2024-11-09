@@ -8,9 +8,17 @@ class MapData:
     DONE_SWITCH = -4
     ARES_ON_SWITCH = -5
 
+    DIRECTIONS = {
+        'u': (-1, 0),
+        'd': (1, 0),
+        'l': (0, -1),
+        'r': (0, 1)
+    }
+
     def __init__(self):
         self.stones = []
         self.map_matrix = []
+        self.current_position = None
 
 
     # 1, 2, 3...: index of stone
@@ -31,6 +39,7 @@ class MapData:
                     self.map_matrix[i][j] = self.BLOCKER
                 elif raw_map_data[i][j] == '@':
                     self.map_matrix[i][j] = self.USER
+                    self.current_position = (i, j)
                 elif raw_map_data[i][j] == '.':
                     self.map_matrix[i][j] = self.SWITCH
                 elif raw_map_data[i][j] == '*':
@@ -69,3 +78,34 @@ class MapData:
     
     def get_stones(self):
         return self.stones
+    
+    def copy(self) -> 'MapData':
+        new_map = MapData()
+        new_map.set_map_matrix(self.map_matrix, self.stones)
+        return new_map
+
+    def calculate_heuristic(self) -> int:
+        return 0
+    
+    def move(self, direction: str) -> bool:
+        # can move if the next position is not a blocker and not out of bounds
+        # can push a stone if the next position is a stone and the position after that is not a blocker or another stone
+        # can only push one stone at a time
+        x, y = self.current_position
+        dx, dy = self.DIRECTIONS[direction]
+        next_x, next_y = x + dx, y + dy
+        next_next_x, next_next_y = next_x + dx, next_y + dy
+
+        if self.map_matrix[next_x][next_y] == self.BLOCKER:
+            return False
+        
+        if self.map_matrix[next_x][next_y] in self.stones:
+            if self.map_matrix[next_next_x][next_next_y] in self.stones or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER:
+                return False
+            self.stones[self.stones.index(self.map_matrix[next_x][next_y])] = self.map_matrix[next_next_x][next_next_y]
+
+        self.map_matrix[next_x][next_y] = self.map_matrix[x][y]
+        self.map_matrix[x][y] = self.SPACE
+        self.current_position = (next_x, next_y)
+
+        return True
