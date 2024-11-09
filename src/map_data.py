@@ -21,6 +21,9 @@ class MapData:
         self.current_position = None
         self.position_stones = []
 
+        self.position_switches = []
+        self.move_cost = 0
+
 
     # 1, 2, 3...: index of stone
     # 0: empty space
@@ -44,10 +47,13 @@ class MapData:
                     self.current_position = (i, j)
                 elif raw_map_data[i][j] == '.':
                     self.map_matrix[i][j] = self.SWITCH
+                    self.position_switches.append((i, j))
                 elif raw_map_data[i][j] == '*':
                     self.map_matrix[i][j] = self.DONE_SWITCH
+                    self.position_switches.append((i, j))
                 elif raw_map_data[i][j] == '+':
                     self.map_matrix[i][j] = self.ARES_ON_SWITCH
+                    self.position_switches.append((i, j))
                 else:
                     num_weigh_stones += 1
                     self.map_matrix[i][j] = num_weigh_stones
@@ -82,12 +88,19 @@ class MapData:
     def get_stones(self):
         return self.weigh_stones, self.position_stones
     
+    def get_switches(self):
+        return self.position_switches
+    
     def get_current_position(self):
         return self.current_position
     
     def copy(self) -> 'MapData':
         new_map = MapData()
-        new_map.set_map_matrix(self.map_matrix, self.weigh_stones)
+        new_map.weigh_stones = copy.deepcopy(self.weigh_stones)
+        new_map.map_matrix = copy.deepcopy(self.map_matrix)
+        new_map.current_position = copy.deepcopy(self.current_position)
+        new_map.position_stones = copy.deepcopy(self.position_stones)
+        new_map.position_switches = copy.deepcopy(self.position_switches)
         return new_map
 
     def calculate_heuristic(self) -> int:
@@ -101,6 +114,7 @@ class MapData:
         dx, dy = self.DIRECTIONS[direction]
         next_x, next_y = x + dx, y + dy
         next_next_x, next_next_y = next_x + dx, next_y + dy
+        self.move_cost = 0
 
         if self.map_matrix[next_x][next_y] == self.BLOCKER:
             return None
@@ -112,14 +126,14 @@ class MapData:
                 return None
             
             if self.map_matrix[next_next_x][next_next_y] == self.SPACE:
-                print(f"Stone at ({next_x}, {next_y})")
+                # print(f"Stone at ({next_x}, {next_y})")
                 if self.map_matrix[next_x][next_y] > 0:
                     self.map_matrix[next_next_x][next_next_y] = self.map_matrix[next_x][next_y]
                 elif self.map_matrix[next_x][next_y] == self.DONE_SWITCH:
                     # find stone at (next_x, next_y) using find function
                     index = self.position_stones.index((next_x, next_y))
-                    print(f"Index: {index}")
-                    print(f"Position: {self.position_stones[index]}")
+                    # print(f"Index: {index}")
+                    # print(f"Position: {self.position_stones[index]}")
                     self.map_matrix[next_next_x][next_next_y] = index
 
             elif self.map_matrix[next_next_x][next_next_y] == self.SWITCH:
@@ -127,6 +141,7 @@ class MapData:
 
             # update the position of the stone
             stone = self.map_matrix[next_x][next_y]
+            self.move_cost += self.weigh_stones[self.position_stones.index((next_x, next_y))]
             if stone > 0:
                 self.position_stones[stone] = (next_next_x, next_next_y)
             elif stone == self.DONE_SWITCH:
@@ -142,7 +157,7 @@ class MapData:
         if self.map_matrix[next_x][next_y] == self.DONE_SWITCH or self.map_matrix[next_x][next_y] == self.SWITCH:
             self.map_matrix[next_x][next_y] = self.ARES_ON_SWITCH
         elif self.map_matrix[next_x][next_y] > 0 or self.map_matrix[next_x][next_y] == self.SPACE:
-            self.map_matrix[next_x][next_y] = self.map_matrix[x][y]
+            self.map_matrix[next_x][next_y] = self.USER
 
         if self.map_matrix[x][y] == self.ARES_ON_SWITCH:
             self.map_matrix[x][y] = self.SWITCH
@@ -150,5 +165,27 @@ class MapData:
             self.map_matrix[x][y] = self.SPACE
 
         self.current_position = (next_x, next_y)
+        self.move_cost += 1
 
         return self
+    
+    def get_move_cost(self) -> int:
+        return self.move_cost
+    
+    def hash_map(self) -> int:
+        return hash(tuple(map(tuple, self.map_matrix)))
+    
+    def get_possible_moves(self) -> list:
+        possible_moves = []
+        x, y = self.current_position
+        for direction in self.DIRECTIONS:
+            dx, dy = self.DIRECTIONS[direction]
+            next_x, next_y = x + dx, y + dy
+            next_next_x, next_next_y = next_x + dx, next_y + dy
+            if self.map_matrix[next_x][next_y] == self.BLOCKER:
+                continue
+            if self.map_matrix[next_x][next_y] > 0 or self.map_matrix[next_x][next_y] == self.DONE_SWITCH:
+                if self.map_matrix[next_next_x][next_next_y] > 0 or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER or self.map_matrix[next_next_x][next_next_y] == self.DONE_SWITCH:
+                    continue
+            possible_moves.append(direction)
+        return possible_moves
