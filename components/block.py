@@ -1,8 +1,7 @@
 from PyQt6.QtWidgets import QWidget, QLabel
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtCore import Qt  # Import Qt for scaling options
+from PyQt6.QtCore import Qt
 
-# Assuming ResourceHolder is a class that loads images
 from components.resource_holder import ResourceHolder
 
 class Block(QWidget):
@@ -16,26 +15,33 @@ class Block(QWidget):
         "+" : "ares"
     }
 
-    def __init__(self, type, size):
+    def __init__(self, block_type: str, size: int, weight: int = None):
         super().__init__()
 
-        # Load the image from ResourceHolder
-        decoded_type = self.decoder.get(type, "flat")  # Default to flat if type is not found
-        image_path = ResourceHolder().get_image(decoded_type)  # Ensure this returns a valid path or QPixmap
-        self.image_label = QLabel(self)  # QLabel to hold the image
+        # Load the main image
+        decoded_type = self.decoder.get(block_type, "flat")
+        image_path = ResourceHolder().get_image(decoded_type)
+        self.image_label = QLabel(self)
 
-        # If image_path is a file path, load it as a QPixmap
-        if isinstance(image_path, str):  # Check if it's a file path
+        if isinstance(image_path, str):
             pixmap = QPixmap(image_path)
-        elif isinstance(image_path, QPixmap):  # If already a QPixmap, use it directly
+        elif isinstance(image_path, QPixmap):
             pixmap = image_path
         else:
             raise ValueError("Invalid image source in ResourceHolder")
 
-        # Scale the pixmap to fit the QLabel's size while maintaining aspect ratio
+        # Scale the main image to fit
         scaled_pixmap = pixmap.scaled(size, size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         self.image_label.setPixmap(scaled_pixmap)
 
-        # Set fixed size for the Block widget and adjust QLabel size to fit
+        # Set fixed size for the Block widget and QLabel
         self.setFixedSize(size, size)
         self.image_label.setFixedSize(size, size)
+
+        # Stack a smaller object if type is stone and weight is provided
+        if decoded_type == "stone" and weight is not None:
+            weight_label = QLabel(str(weight), self)
+            weight_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            weight_label.setStyleSheet("color: white; background-color: rgba(0, 0, 0, 0);")
+            weight_label.setFixedSize(size // 2, size // 2)
+            weight_label.move(size // 4, size // 4)

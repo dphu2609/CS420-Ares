@@ -12,7 +12,7 @@ class App(QMainWindow):
 
         self.resource_holder = ResourceHolder()
         self.resource_holder.load_images()
-        self.map_matrix = MapData()
+        self.map_data = MapData()
 
         self.initUI()
 
@@ -60,7 +60,7 @@ class App(QMainWindow):
 
         self.central_widget.setLayout(self.layout)
 
-    def display_map(self, map_data):
+    def display_map(self):
         # Remove the previous VisualMap widget if it exists
         if self.visualization_map:
             self.layout.removeWidget(self.visualization_map)
@@ -68,10 +68,10 @@ class App(QMainWindow):
 
         # Set the dimensions for the VisualMap based on the current window size
         total_width = self.width()
-        total_height = self.height()  # Subtract some space for other UI components
+        total_height = self.height() - 140
 
         # Create a new VisualMap with the map data and calculated dimensions
-        self.visualization_map = VisualMap(map_data, total_width, total_height)
+        self.visualization_map = VisualMap(self.map_data, total_width, total_height)
 
         # Set the background color of VisualMap to white
         self.visualization_map.setStyleSheet("background-color: white;")
@@ -85,8 +85,8 @@ class App(QMainWindow):
             selected_files = file_dialog.selectedFiles()
             if selected_files:  # Check if any files were selected
                 file_path = selected_files[0]
-                map_data = self.parse_map(file_path)
-                self.display_map(map_data)
+                self.parse_map(file_path)
+                self.display_map()
             else:
                 print("No file selected.")  # Optionally inform the user
 
@@ -97,14 +97,8 @@ class App(QMainWindow):
 
         stones = list(map(int, content[0].split()))
         map_data = [list(line.strip('\n')) for line in content[1:]]
-        # print(f"Map Data: {map_data}")
 
-        self.map_matrix.set_map_matrix(map_data, stones)
-
-        # print(f"Stones: {stones}")
-        print(f"Map Data: {self.map_matrix.convert_display_map()}")
-        # print(f"Stone Data: {self.map_matrix.get_stones()}")
-        return map_data
+        self.map_data.set_map_matrix(map_data, stones)
     
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
