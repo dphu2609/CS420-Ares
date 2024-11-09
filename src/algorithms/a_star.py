@@ -1,6 +1,6 @@
 from .base_algo import BaseAlgo
 from ..map_data import MapData
-from .heuristic_utils import hungarian_algorithm, convert_map_to_cost_matrix
+from .heuristic_utils import calculate_heuristic
 
 import heapq, sys, time, psutil
 
@@ -30,7 +30,7 @@ class AStar(BaseAlgo):
         self.map = map
 
     def is_goal(self, map: MapData) -> bool:
-        return hungarian_algorithm(convert_map_to_cost_matrix(map)) == 0
+        return calculate_heuristic(map) == 0
 
     def run(self) -> bool:
         start_time = time.time()
@@ -91,7 +91,7 @@ class AStar(BaseAlgo):
 
                 if node_new.g > node_current.g + c:
                     node_new.g = node_current.g + c
-                    node_new.h = hungarian_algorithm(convert_map_to_cost_matrix(new_map))
+                    node_new.h = calculate_heuristic(new_map)
                     node_new.f = node_new.g + node_new.h
                     node_new.previous_move = move
                     if c > 1:
