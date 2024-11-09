@@ -1,4 +1,4 @@
-import copy
+import copy, sys
 
 class MapData:
     SPACE = 0
@@ -16,20 +16,22 @@ class MapData:
     }
 
     def __init__(self):
-        self.stones = []
+        self.weigh_stones = []
         self.map_matrix = []
         self.current_position = None
+        self.position_stones = []
 
 
     # 1, 2, 3...: index of stone
     # 0: empty space
     # -1: user
     # -2: destination
-    # self.stones[self.map_matrix[y][x]] 
-    def set_map_matrix(self, raw_map_data: list, stones: list):
+    # self.weigh_stones[self.map_matrix[y][x]] 
+    def set_map_matrix(self, raw_map_data: list, weigh_stones: list):
         self.map_matrix = copy.deepcopy(raw_map_data)
-        self.stones = copy.deepcopy(stones)
-        num_stones = 0
+        self.weigh_stones = [None] + copy.deepcopy(weigh_stones) # 0 is empty space, 1 is the first stone
+        self.position_stones = [None] * (len(weigh_stones) + 1)
+        num_weigh_stones = 0
 
         for i in range(len(raw_map_data)):
             for j in range(len(raw_map_data[i])):
@@ -47,8 +49,9 @@ class MapData:
                 elif raw_map_data[i][j] == '+':
                     self.map_matrix[i][j] = self.ARES_ON_SWITCH
                 else:
-                    num_stones += 1
-                    self.map_matrix[i][j] = num_stones
+                    num_weigh_stones += 1
+                    self.map_matrix[i][j] = num_weigh_stones
+                    self.position_stones[num_weigh_stones] = (i, j)
 
     # convert to #, @, ., and $
     def get_display_map(self):
@@ -76,12 +79,12 @@ class MapData:
     def get_map_matrix(self):
         return self.map_matrix
     
-    def get_stones(self):
-        return self.stones
+    def get_weigh_stones(self):
+        return self.weigh_stones
     
     def copy(self) -> 'MapData':
         new_map = MapData()
-        new_map.set_map_matrix(self.map_matrix, self.stones)
+        new_map.set_map_matrix(self.map_matrix, self.weigh_stones)
         return new_map
 
     def calculate_heuristic(self) -> int:
@@ -99,13 +102,47 @@ class MapData:
         if self.map_matrix[next_x][next_y] == self.BLOCKER:
             return False
         
-        if self.map_matrix[next_x][next_y] in self.stones:
-            if self.map_matrix[next_next_x][next_next_y] in self.stones or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER:
+        if self.map_matrix[next_x][next_y] > 0: # stone
+            if self.map_matrix[next_next_x][next_next_y] > 0 \
+                or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER \
+                or self.map_matrix[next_next_x][next_next_y] == self.DONE_SWITCH:
                 return False
-            self.stones[self.stones.index(self.map_matrix[next_x][next_y])] = self.map_matrix[next_next_x][next_next_y]
+            
+            if self.map_matrix[next_next_x][next_next_y] == self.SPACE:
+                if self.map_matrix[next_x][next_y] > 0:
+                    self.map_matrix[next_next_x][next_next_y] = self.map_matrix[next_x][next_y]
+                elif self.map_matrix[next_x][next_y] == self.DONE_SWITCH:
+                    # find stone at (next_x, next_y) using find function
+                    index = self.position_stones.index((next_x, next_y))
+                    self.map_matrix[next_next_x][next_next_y] = index
 
-        self.map_matrix[next_x][next_y] = self.map_matrix[x][y]
-        self.map_matrix[x][y] = self.SPACE
+            elif self.map_matrix[next_next_x][next_next_y] == self.SWITCH:
+                self.map_matrix[next_next_x][next_next_y] = self.DONE_SWITCH
+
+            # update the position of the stone
+            stone = self.map_matrix[next_x][next_y]
+            if stone > 0:
+                self.position_stones[stone] = (next_next_x, next_next_y)
+            elif stone == self.DONE_SWITCH:
+                # find the stone that was on the switch by looking at the position of the switch
+                for i in range(1, len(self.position_stones)):
+                    if self.position_stones[i] == (next_x, next_y):
+                        self.position_stones[i] = (next_next_x, next_next_y)
+            else:
+                print("Invalid stone position")
+                sys.exit(1)
+                
+
+        if self.map_matrix[next_x][next_y] == self.DONE_SWITCH or self.map_matrix[next_x][next_y] == self.SWITCH:
+            self.map_matrix[next_x][next_y] = self.ARES_ON_SWITCH
+        elif self.map_matrix[next_x][next_y] > 0 or self.map_matrix[next_x][next_y] == self.SPACE:
+            self.map_matrix[next_x][next_y] = self.map_matrix[x][y]
+
+        if self.map_matrix[x][y] == self.ARES_ON_SWITCH:
+            self.map_matrix[x][y] = self.SWITCH
+        elif self.map_matrix[x][y] == self.USER:
+            self.map_matrix[x][y] = self.SPACE
+            
         self.current_position = (next_x, next_y)
 
         return True
