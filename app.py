@@ -67,7 +67,7 @@ class App(QMainWindow):
 
         # Set the dimensions for the VisualMap based on the current window size
         total_width = self.width()
-        total_height = self.height()  # Subtract some space for other UI components
+        total_height = self.height() - 140
 
         # Create a new VisualMap with the map data and calculated dimensions
         self.visualization_map = VisualMap(self.map_data, total_width, total_height)

@@ -15,11 +15,11 @@ class Block(QWidget):
         "+" : "ares"
     }
 
-    def __init__(self, type, size, weight=None):
+    def __init__(self, block_type: str, size: int, weight: int = None):
         super().__init__()
 
         # Load the main image
-        decoded_type = self.decoder.get(type, "flat")
+        decoded_type = self.decoder.get(block_type, "flat")
         image_path = ResourceHolder().get_image(decoded_type)
         self.image_label = QLabel(self)
 
@@ -39,27 +39,9 @@ class Block(QWidget):
         self.image_label.setFixedSize(size, size)
 
         # Stack a smaller object if type is stone and weight is provided
-        if type == "stone" and weight is not None:
-            self.add_stacked_item(size)
-
-    def add_stacked_item(self, size):
-        # Load a smaller object image (for example, "half_stone")
-        stacked_image_path = ResourceHolder().get_image("half_stone")  # Ensure a "half_stone" image exists
-        stacked_label = QLabel(self)
-
-        if isinstance(stacked_image_path, str):
-            stacked_pixmap = QPixmap(stacked_image_path)
-        elif isinstance(stacked_image_path, QPixmap):
-            stacked_pixmap = stacked_image_path
-        else:
-            raise ValueError("Invalid image source in ResourceHolder")
-
-        # Scale to half the size
-        half_size = size // 2
-        stacked_scaled_pixmap = stacked_pixmap.scaled(half_size, half_size, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-        stacked_label.setPixmap(stacked_scaled_pixmap)
-
-        # Position the stacked item on top of the stone
-        stacked_label.move((size - half_size) // 2, (size - half_size) // 2)
-        stacked_label.setFixedSize(half_size, half_size)
-        stacked_label.show()
+        if decoded_type == "stone" and weight is not None:
+            weight_label = QLabel(str(weight), self)
+            weight_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            weight_label.setStyleSheet("color: white; background-color: rgba(0, 0, 0, 0);")
+            weight_label.setFixedSize(size // 2, size // 2)
+            weight_label.move(size // 4, size // 4)

@@ -20,7 +20,7 @@ class MapData:
     # self.stones[self.map_matrix[y][x]] 
     def set_map_matrix(self, raw_map_data: list, stones: list):
         self.map_matrix = copy.deepcopy(raw_map_data)
-        self.stones = [None] + copy.deepcopy(stones)
+        self.stones = copy.deepcopy(stones)
         num_stones = 0
 
         for i in range(len(raw_map_data)):

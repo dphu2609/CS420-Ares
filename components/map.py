@@ -3,10 +3,11 @@ from components.block import Block
 from src.map_data import MapData
 
 class VisualMap(QWidget):
-    def __init__(self, map_data, total_width, total_height):
+    def __init__(self, map_data: MapData, total_width: int, total_height: int):
         super().__init__()
 
         self.layout = QGridLayout()
+
         self.setLayout(self.layout)
 
         self.matrix = map_data.get_display_map()

@@ -14,7 +14,7 @@ class ResourceHolder:
         
     paths = {
         "stone" : "assets/stone.png",
-        "flat" : "assets/flat.jpg",
+        "flat" : "assets/flat.png",
         "switch" : "assets/switch.jpeg",
         "wall" : "assets/wall.jpg",
         "ares" : "assets/ares.png",
