@@ -4,6 +4,7 @@ import sys
 from components.resource_holder import ResourceHolder
 from components.map import VisualMap
 from src.map_data import MapData
+from src.algorithms.base_algo import BaseAlgo
 
 class App(QMainWindow):
     def __init__(self):
@@ -101,13 +102,22 @@ class App(QMainWindow):
         self.map_matrix.set_map_matrix(map_data, stones)
 
         # print(f"Stones: {stones}")
-        # print(f"Map Data: {self.map_matrix.get_map_matrix()}")
+        print(f"Map Data: {self.map_matrix.convert_display_map()}")
         # print(f"Stone Data: {self.map_matrix.get_stones()}")
         return map_data
     
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
         print(f"Starting visualization with {selected_algo}")
+
+        self.algo.set_map(self.map_matrix)
+        self.algo.run()
+
+        # Get the updated map data after running the algorithm
+        updated_map_data = self.algo.get_map()
+
+        # Display the updated map data
+        self.display_map(updated_map_data.convert_display_map())
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
