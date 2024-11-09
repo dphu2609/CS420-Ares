@@ -79,7 +79,7 @@ class MapData:
     def get_map_matrix(self):
         return self.map_matrix
     
-    def get_weigh_stones(self):
+    def get_stones(self):
         return self.weigh_stones
     
     def get_current_position(self):
@@ -93,7 +93,7 @@ class MapData:
     def calculate_heuristic(self) -> int:
         return 0
     
-    def move(self, direction: str) -> bool:
+    def move(self, direction: str) -> 'MapData':
         # can move if the next position is not a blocker and not out of bounds
         # can push a stone if the next position is a stone and the position after that is not a blocker or another stone
         # can only push one stone at a time
@@ -103,13 +103,13 @@ class MapData:
         next_next_x, next_next_y = next_x + dx, next_y + dy
 
         if self.map_matrix[next_x][next_y] == self.BLOCKER:
-            return False
+            return None
         
         if self.map_matrix[next_x][next_y] > 0: # stone
             if self.map_matrix[next_next_x][next_next_y] > 0 \
                 or self.map_matrix[next_next_x][next_next_y] == self.BLOCKER \
                 or self.map_matrix[next_next_x][next_next_y] == self.DONE_SWITCH:
-                return False
+                return None
             
             if self.map_matrix[next_next_x][next_next_y] == self.SPACE:
                 if self.map_matrix[next_x][next_y] > 0:
@@ -145,7 +145,7 @@ class MapData:
             self.map_matrix[x][y] = self.SWITCH
         elif self.map_matrix[x][y] == self.USER:
             self.map_matrix[x][y] = self.SPACE
-            
+
         self.current_position = (next_x, next_y)
 
-        return True
+        return self
