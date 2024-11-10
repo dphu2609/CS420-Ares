@@ -140,9 +140,16 @@ class App(QMainWindow):
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
         print(f"Starting visualization with {selected_algo}")
+        # Change the button text to "Analyzing..."
+        self.start_button.setText("Analyzing...")
+        self.start_button.repaint()  # Update the GUI immediately
 
         self.run_algo(ALGORITHMS_DICT[selected_algo], selected_algo)
-        
+
+        self.start_button.setText("Start Visualization")
+        self.start_button.repaint()  # Update the GUI immediately
+
+
     def run_algo(self, baseAlgo: BaseAlgo, selected_algo: str):
         algoer = baseAlgo()
         algoer.set_map(self.map_data.copy())
