@@ -203,7 +203,7 @@ class App(QMainWindow):
         self.push_moves(path)
         QTimer.singleShot(0, self.run_moves)
 
-        # self.export_output(selected_algo, len(path), total_w, num_explored, time_consumed, mem_consumed, ''.join(path))
+        self.export_output(selected_algo, len(path), total_w, num_explored, time_consumed, mem_consumed, ''.join(path))
         print("Output exported\n")
 
 
