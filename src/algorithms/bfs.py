@@ -1,7 +1,7 @@
 from collections import deque
 from scipy.optimize import linear_sum_assignment
 import numpy as np
-from base_algo import BaseAlgo
+from .base_algo import BaseAlgo
 from ..map_data import MapData
 
 

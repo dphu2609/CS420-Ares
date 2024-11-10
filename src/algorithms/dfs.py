@@ -1,4 +1,4 @@
-from base_algo import BaseAlgo
+from .base_algo import BaseAlgo
 from ..map_data import MapData
 
 class DFS(BaseAlgo):
