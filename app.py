@@ -142,24 +142,7 @@ class App(QMainWindow):
         print(f"Starting visualization with {selected_algo}")
 
         self.run_algo(ALGORITHMS_DICT[selected_algo], selected_algo)
-            # astar = AStar()
-            # astar.set_map(self.map_data.copy())
-            # astar.run()
-            # path, maps, total_w = astar.get_path()
-            # time_consumed, mem_consumed, num_explored = astar.get_stats()
-            # print(f"Alogrithm: {selected_algo}")
-            # print(f"Total steps: {len(path)}")
-            # print(f"Total weight: {total_w}")
-            # print(f"Time consumed: {time_consumed} seconds")
-            # print(f"Memory consumed: {mem_consumed} MB")
-            # print(f"Number of explored nodes: {num_explored}")
-            # print(f"Path: {''.join(path)}")
-
-            # self.push_moves(path)
-            # QTimer.singleShot(0, self.run_moves)
-
-            # self.export_output(selected_algo, len(path), total_w, num_explored, time_consumed, mem_consumed, path)
-
+        
     def run_algo(self, baseAlgo: BaseAlgo, selected_algo: str):
         algoer = baseAlgo()
         algoer.set_map(self.map_data.copy())
