@@ -104,7 +104,7 @@ class AStar(BaseAlgo):
             maps.append(self.game_state_dict[current].get_display_map())
             current = self.node_dict[current].parent.current
 
-        pushed_weight = self.node_dict[self.goal_hash].g - len(path) + 1
+        pushed_weight = self.node_dict[self.goal_hash].g - len(path)
 
         return path[::-1], maps[::-1], pushed_weight
     
