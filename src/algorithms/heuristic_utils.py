@@ -31,13 +31,15 @@ def static_vars(**kwargs):
 
 @static_vars(heuristic_memory={})
 def calculate_heuristic(map_data: MapData) -> float:
+    # calculate_heuristic.heuristic_memory.clear()
     weighed_stones, position_stones = map_data.get_stones()
     goals = map_data.get_switches()
 
     # Convert position_stones and goals to tuples and hash them
+    weighed_stones_tuple = tuple(weighed_stones)
     position_stones_tuple = tuple(map(tuple, position_stones[1:]))
     goals_tuple = tuple(map(tuple, goals))
-    hash_val = hash((position_stones_tuple, goals_tuple))
+    hash_val = hash((weighed_stones_tuple, position_stones_tuple, goals_tuple))
     
     # Check if the heuristic has already been calculated
     if hash_val in calculate_heuristic.heuristic_memory:

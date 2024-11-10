@@ -67,6 +67,8 @@ class UCS(BaseAlgo):
                     node_new = Node(hash_new, node_current)
                     node_new.f = f + c
                     node_new.previous_move = move
+                    if c > 1:
+                        node_new.previous_move = move.upper()
                     self.node_dict[hash_new] = node_new
                     heapq.heappush(open_list, (node_new.f, hash_new))
                 else:
@@ -75,6 +77,8 @@ class UCS(BaseAlgo):
                         node_new.f = f + c
                         node_new.parent = node_current
                         node_new.previous_move = move
+                        if c > 1:
+                            node_new.previous_move = move.upper()
                         heapq.heappush(open_list, (node_new.f, hash_new))
 
         return False
@@ -93,7 +97,9 @@ class UCS(BaseAlgo):
             maps.append(self.game_state_dict[current].get_display_map())
             current = self.node_dict[current].parent.current
 
-        return path[::-1], maps[::1], self.node_dict[self.goal_hash].f
+        pushed_weight = self.node_dict[self.goal_hash].f - len(path)
+
+        return path[::-1], maps[::1], pushed_weight
     
     def get_stats(self):
         return self.time_consumed, self.memory_consumed, len(self.node_dict)
