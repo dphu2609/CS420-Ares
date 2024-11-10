@@ -7,10 +7,15 @@ from utils.bfs_dfs_utils import measure_memory_and_time, generate_new_state, che
 
 class BFS(BaseAlgo):
     def __init__(self):
-        pass
+        self.time = 0
+        self.result = None
+        self.memory = 0
 
     def run(self) -> bool:
         result, time, memory = self.run_bfs()
+        self.time = time
+        self.memory = memory
+        self.result = result
         print("Result:", result)
         print("Nodes expanded:", self.nodes_expanded)
         print("Total weight pushed:", self.total_weight_pushed)
@@ -18,6 +23,9 @@ class BFS(BaseAlgo):
         print(f"Time taken: {time:.2f} ms")
         print(f"Peak memory usage: {memory:.4f} MB")
         return result
+    
+    def get_stats(self):
+        return self.time / 1000, self.memory, self.nodes_expanded
 
     def set_map(self, map: MapData):
         self.map = map
@@ -33,8 +41,8 @@ class BFS(BaseAlgo):
     def get_map(self) -> MapData:
         return self.map
 
-    def get_path(self) -> list:
-        return self.path
+    def get_path(self):
+        return self.path, self.map, self.total_weight_pushed
 
     @measure_memory_and_time
     def run_bfs(self):
