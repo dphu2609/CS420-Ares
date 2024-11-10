@@ -50,8 +50,6 @@ class AStar(BaseAlgo):
         self.start_hash = hash_start
         heapq.heappush(open_list, (0, hash_start))
 
-        DEBUG = 0
-
         while open_list:
             f, hash_current = heapq.heappop(open_list)
             current = self.game_state_dict[hash_current]
@@ -62,16 +60,6 @@ class AStar(BaseAlgo):
                 self.time_consumed = time.time() - start_time
                 self.memory_consumed = psutil.Process().memory_info().rss / 1024 / 1024 - self.memory_consumed
                 return True
-
-            # print current map
-            # print("#########################")
-            # print(f"Current map: {hash_current}")
-            # for row in current.get_display_map():
-            #     print(''.join(row))
-            
-            # DEBUG += 1
-            # if DEBUG == 50:
-            #     sys.exit(1)
 
             closed_list[hash_current] = f
 
