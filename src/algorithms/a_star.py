@@ -98,6 +98,8 @@ class AStar(BaseAlgo):
                         node_new.previous_move = move.upper()
                     heapq.heappush(open_list, (node_new.f, hash_new))
 
+        return False
+
 
     def get_map(self) -> MapData:
         pass
