@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox, QHBoxLayout
 import sys, collections, os
 
 from components.resource_holder import ResourceHolder
@@ -86,12 +86,21 @@ class App(QMainWindow):
 
         # Create a new VisualMap with the map data and calculated dimensions
         self.visualization_map = VisualMap(self.map_data, total_width, total_height)
-        self.central_widget.layout().addWidget(self.visualization_map)
+        # self.central_widget.layout().addWidget(self.visualization_map)
 
         # Set the background color of VisualMap to white
         self.visualization_map.setStyleSheet("background-color: white;")
 
-        self.layout.insertWidget(1, self.visualization_map)  # Insert after file button
+        h_layout = QHBoxLayout()
+        h_layout.addStretch(1)
+        h_layout.addWidget(self.visualization_map)
+        h_layout.addStretch(1)
+
+        v_layout = QVBoxLayout()
+        v_layout.addLayout(h_layout)
+        # v_layout.addStretch(1)
+
+        self.layout.insertLayout(1, v_layout)  # Insert after file button
 
         self.visualization_map.update()
         self.update()
