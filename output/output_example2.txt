@@ -1,0 +1,12 @@
+Algorithm: BFS
+Steps: 34, Weight: 763, Node: 1625456, Time: 46.7135055065155 seconds, Memory: 411.5309410095215 MB
+Path: rruRRRRdrUUldllluuLLLdlDrdLrrrRRRR
+
+Algorithm: UCS
+Steps: 34, Weight: 797, Node: 1139155, Time: 142.8387954235077 seconds, Memory: 1883.5 MB
+Path: rurrrrrdruudllluulllldldrdlrrrrrrr
+
+Algorithm: UCS
+Steps: 0, Weight: 0, Node: 1, Time: 0.00030422210693359375 seconds, Memory: 0.0 MB
+Path: 
+
