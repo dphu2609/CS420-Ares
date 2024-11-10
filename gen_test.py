@@ -3,7 +3,7 @@ import os
 
 def generate_weights(num_stones):
     # Generate random weights between 1 and 10
-    weights = [random.randint(1, 10) for _ in range(num_stones)]
+    weights = [random.randint(1, 99) for _ in range(num_stones)]
     return weights
 
 def generate_board(n, m, num_stones, num_blockers):
@@ -66,10 +66,12 @@ def print_board(weights, board):
 def main():
     # Create data directory if it doesn't exist
     os.makedirs('data', exist_ok=True)
+
+    invalid_cases = [8]
     
-    for i in range(1, 21):
-        n = random.randint(8, 12)
-        m = random.randint(8, 12)
+    for i in invalid_cases:
+        n = random.randint(6, 8)
+        m = random.randint(8, 10)
         num_stones = random.randint(2, 3)
         num_blockers = random.randint(0, 10)
         

@@ -1,0 +1,16 @@
+Algorithm: BFS
+Steps: 16, Weight: 308, Nodes: 2741, Time: 0.12035751342773438 seconds, Memory: 0.6198024749755859 MB
+Path: drUUrrdLLLrruuLL
+
+Algorithm: DFS
+Steps: 794, Weight: 5612, Nodes: 16308, Time: 0.7769582271575928 seconds, Memory: 5.042243957519531 MB
+Path: drUUdlluuurrDullddrRurrddLUdLuuulldddRdrUUdlluuurrDullddrRdrruuLLulDulldddrrUdlluurRulldddrrrrUdlluuurDulldddrrruLuulldddrUdlluuurrrdLulDurrdddllUdrrurruLddlluuulDurrDulldDuurrdDurrddlLdlUUdrruululDulldddRuuurrddLuulldddrUdRuuulDurrddrdLdlUUdlUdrruuulDulDDuurrdddlUdrruululldlddRuuurDulldddrRUluurDullddrRurrddLUddlUUdlluuurrDullddrRdrruuLulDulldddrrUdrUdlluuurDulldddrrruLdrruuLulDulldddrUdrUdlluuurDldRRdlluuurrDDRuulldddRuurrDululldddrdrUUdlluuurrDullddrRurrddLUdLuuulldddRRurruLLulDulldddrrruLuulldddrUluurrrddrrdLLuuullldRddRuluurDullddrRurrddLUdLuuulldddRRdrUluRdlluurRulldddrrrruuLLulDulldddrrUdrrUdlluluurDulldddrrruLuulldddrUdrrurruLddlluuulDurrDulldlddrUrRuullDurrdddrUruLLulldldRuurrdLDuulDurrdddLruuulldlddRRdrUluRuulldDuurrdrDulullddldRuuurrddddlUUdlluuurrDrdLuulldddrUdrruurrddLLL
+
+Algorithm: UCS
+Steps: 16, Weight: 308, Nodes: 9765, Time: 1.0633437633514404 seconds, Memory: 4.375 MB
+Path: drUUruLLrrdrdLLL
+
+Algorithm: AStar
+Steps: 16, Weight: 308, Nodes: 480, Time: 0.038813114166259766 seconds, Memory: 0.0 MB
+Path: drUUruLLrrdrdLLL
+

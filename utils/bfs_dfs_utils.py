@@ -67,4 +67,4 @@ def check_if_reach_goal_state(state, goal_state):
     _, stones_positions, _, _ = state
     _, goal_stones_positions = goal_state
     # Convert both to lists for comparison
-    return list(stones_positions) == list(goal_stones_positions)
+    return set(stones_positions) == set(goal_stones_positions)
