@@ -1,4 +1,5 @@
 import random
+import os
 
 def generate_weights(num_stones):
     # Generate random weights between 1 and 10
@@ -63,18 +64,22 @@ def print_board(weights, board):
         print(''.join(row))
 
 def main():
-    # Board dimensions
-    n = 10  # Number of rows
-    m = 10  # Number of columns
-    num_stones = 5  # Number of stones and goals
-    num_blockers = 10  # Number of internal blockers
-
-    # Generate weights and board
-    weights = generate_weights(num_stones)
-    board = generate_board(n, m, num_stones, num_blockers)
-
-    # Output the test case
-    print_board(weights, board)
+    # Create data directory if it doesn't exist
+    os.makedirs('data', exist_ok=True)
+    
+    for i in range(1, 21):
+        n = random.randint(8, 12)
+        m = random.randint(8, 12)
+        num_stones = random.randint(2, 3)
+        num_blockers = random.randint(0, 10)
+        
+        weights = generate_weights(num_stones)
+        board = generate_board(n, m, num_stones, num_blockers)
+        
+        with open(f'data/input{i}.txt', 'w') as f:
+            f.write(' '.join(map(str, weights)) + '\n')
+            for row in board:
+                f.write(''.join(row) + '\n')
 
 if __name__ == "__main__":
     main()
