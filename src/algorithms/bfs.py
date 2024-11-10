@@ -16,12 +16,6 @@ class BFS(BaseAlgo):
         self.time = time
         self.memory = memory
         self.result = result
-        print("Result:", result)
-        print("Nodes expanded:", self.nodes_expanded)
-        print("Total weight pushed:", self.total_weight_pushed)
-        print("Path:", self.path)
-        print(f"Time taken: {time:.2f} ms")
-        print(f"Peak memory usage: {memory:.4f} MB")
         return result
     
     def get_stats(self):
@@ -61,8 +55,6 @@ class BFS(BaseAlgo):
             if check_if_reach_goal_state(current_state, self.goal_state):
                 _, stones_positions, _, _ = current_state
                 _, goal_stones_positions = self.goal_state
-                print("Current state:", stones_positions)
-                print("Goal state:", goal_stones_positions)
                 self.path = current_state[2]
                 self.total_weight_pushed = current_state[3]
                 return True

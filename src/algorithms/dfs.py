@@ -14,12 +14,6 @@ class DFS(BaseAlgo):
         self.time = time
         self.memory = memory
         self.result = result
-        print("Result:", result)
-        print("Nodes expanded:", self.nodes_expanded)
-        print("Total weight pushed:", self.total_weight_pushed)
-        print("Path:", self.path)
-        print(f"Time taken: {time:.2f} ms")
-        print(f"Peak memory usage: {memory:.4f} MB")
         return result
     
     def get_stats(self):
