@@ -23,11 +23,16 @@ class VisualMap(QWidget):
         cols = len(self.matrix[0]) if rows > 0 else 0
         block_size = min(total_width // cols, total_height // rows)
 
+        self.setFixedSize(cols * block_size, rows * block_size)
+
         # Initialize the matrix with the calculated block size
         self.init_matrix(self.matrix, block_size, self.dict_stones)
 
     def init_matrix(self, matrix, block_size, stones):
         # index = 0
+        # self.layout.setSpacing(1)
+        # self.layout.setContentsMargins(0, 0, 0, 0)
+
         for i, row in enumerate(matrix):
             for j, block_type in enumerate(row):
                 if block_type == "$" or block_type == "*":
