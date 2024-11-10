@@ -97,7 +97,9 @@ class UCS(BaseAlgo):
             maps.append(self.game_state_dict[current].get_display_map())
             current = self.node_dict[current].parent.current
 
-        return path[::-1], maps[::1], self.node_dict[self.goal_hash].f
+        pushed_weight = self.node_dict[self.goal_hash].f - len(path) + 1
+
+        return path[::-1], maps[::1], pushed_weight
     
     def get_stats(self):
         return self.time_consumed, self.memory_consumed, len(self.node_dict)
