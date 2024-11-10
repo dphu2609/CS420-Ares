@@ -31,8 +31,6 @@ class BFS(BaseAlgo):
         self.map = map
         self.initial_state, self.goal_state = get_initial_state_and_goal_state(map)
         self.stones_weight = map.get_stones_weight()
-        print("Initial state:", self.initial_state)
-        print("Goal state:", self.goal_state)
         self.path = []
         self.map_matrix = map.get_map_matrix()
         self.nodes_expanded = 0
@@ -61,6 +59,10 @@ class BFS(BaseAlgo):
             current_state = queue.popleft()
 
             if check_if_reach_goal_state(current_state, self.goal_state):
+                _, stones_positions, _, _ = current_state
+                _, goal_stones_positions = self.goal_state
+                print("Current state:", stones_positions)
+                print("Goal state:", goal_stones_positions)
                 self.path = current_state[2]
                 self.total_weight_pushed = current_state[3]
                 return True

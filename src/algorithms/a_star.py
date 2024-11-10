@@ -1,6 +1,6 @@
-from .base_algo import BaseAlgo
-from ..map_data import MapData
-from .heuristic_utils import calculate_heuristic
+from src.algorithms.base_algo import BaseAlgo
+from src.map_data import MapData
+from src.algorithms.heuristic_utils import calculate_heuristic
 
 import heapq, sys, time, psutil
 
