@@ -27,8 +27,6 @@ class DFS(BaseAlgo):
         self.map_matrix = map.get_map_matrix()
         self.nodes_expanded = 0
         self.total_weight_pushed = 0
-        self.memory_usage = 0  # in MB
-        self.time = 0  # in ms
 
     def get_map(self) -> MapData:
         return self.map

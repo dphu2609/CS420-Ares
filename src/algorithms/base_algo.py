@@ -18,6 +18,6 @@ class BaseAlgo(abc.ABC):
     def get_path(self) -> list:
         pass
 
-    @abc.abstractmethod
-    def get_stats(self) -> tuple:
-        pass
+    # @abc.abstractmethod
+    # def get_stats(self) -> tuple:
+    #     pass
