@@ -34,6 +34,8 @@ class MapData:
         self.map_matrix = copy.deepcopy(raw_map_data)
         self.weigh_stones = [None] + copy.deepcopy(weigh_stones) # 0 is empty space, 1 is the first stone
         self.position_stones = [None] * (len(weigh_stones) + 1)
+        self.position_switches = []
+        self.current_position = None
         num_weigh_stones = 0
 
         for i in range(len(raw_map_data)):
