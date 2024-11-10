@@ -1,16 +1,17 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox
-import sys, collections
+import sys, collections, os
 
 from components.resource_holder import ResourceHolder
 from components.map import VisualMap
 from src.map_data import MapData
 from src.algorithms.base_algo import BaseAlgo
-from src.algorithms.a_star import AStar
+from src.algorithms.algo_dict import ALGORITHMS_DICT
 
 from PyQt6.QtCore import QTimer
 
 class App(QMainWindow):
     DELAY_STEP = 500
+    OUTPUT_DIR = "./output"
 
     def __init__(self):
         super().__init__()
@@ -20,8 +21,11 @@ class App(QMainWindow):
         self.map_data = MapData()
 
         self.moves = collections.deque()
+        self.input_file_path = ""
 
         self.initUI()
+
+        os.makedirs(self.OUTPUT_DIR, exist_ok=True)
 
         # self.test_move()
 
@@ -98,7 +102,9 @@ class App(QMainWindow):
         if file_dialog.exec():
             selected_files = file_dialog.selectedFiles()
             if selected_files:  # Check if any files were selected
+                # print(selected_files)
                 file_path = selected_files[0]
+                self.input_file_name = file_path
                 self.parse_map(file_path)
                 self.display_map()
             else:
@@ -134,30 +140,51 @@ class App(QMainWindow):
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
         print(f"Starting visualization with {selected_algo}")
+        # Change the button text to "Analyzing..."
+        self.start_button.setText("Analyzing...")
+        self.start_button.repaint()  # Update the GUI immediately
 
-        # self.algo.set_map(self.map_matrix)
-        # self.algo.run()
+        self.run_algo(ALGORITHMS_DICT[selected_algo], selected_algo)
 
-        # # Get the updated map data after running the algorithm
-        # updated_map_data = self.algo.get_map()
+        self.start_button.setText("Start Visualization")
+        self.start_button.repaint()  # Update the GUI immediately
 
-        # # Display the updated map data
-        # self.display_map(updated_map_data.get_display_map())
 
-        if selected_algo == "A*":
-            astar = AStar()
-            astar.set_map(self.map_data.copy())
-            astar.run()
-            path, maps, total_w = astar.get_path()
-            time_consumed, mem_consumed, num_explored = astar.get_stats()
-            print(f"Path: {path}")
-            print(f"Total weight: {total_w}")
-            print(f"Time consumed: {time_consumed} seconds")
-            print(f"Memory consumed: {mem_consumed} MB")
-            print(f"Number of explored nodes: {num_explored}")
+    def run_algo(self, baseAlgo: BaseAlgo, selected_algo: str):
+        algoer = baseAlgo()
+        algoer.set_map(self.map_data.copy())
+        algoer.run()
+        path, maps, total_w = algoer.get_path()
+        time_consumed, mem_consumed, num_explored = algoer.get_stats()
+        print(f"Alogrithm: {selected_algo}")
+        print(f"Total steps: {len(path)}")
+        print(f"Total weight: {total_w}")
+        print(f"Time consumed: {time_consumed} seconds")
+        print(f"Memory consumed: {mem_consumed} MB")
+        print(f"Number of explored nodes: {num_explored}")
+        print(f"Path: {''.join(path)}")
 
-            self.push_moves(path)
-            QTimer.singleShot(0, self.run_moves)
+        self.push_moves(path)
+        QTimer.singleShot(0, self.run_moves)
+
+        self.export_output(selected_algo, len(path), total_w, num_explored, time_consumed, mem_consumed, ''.join(path))
+        print("Output exported\n")
+
+
+    def export_output(self, algo_name, total_steps, total_weight, num_explored, time_consumed, mem_consumed, path):
+        inp_file_name = self.input_file_name.split("/")[-1]
+        out_file_name = inp_file_name.replace("input", "output")
+
+        if "output" not in out_file_name:
+            out_file_name = "output_" + out_file_name
+
+        out_file_path = os.path.join(self.OUTPUT_DIR, out_file_name)
+
+        with open(out_file_path, 'a') as file:
+            file.write(f"Algorithm: {algo_name}\n")
+            file.write(f"Steps: {total_steps}, Weight: {total_weight}, Node: {num_explored}, Time: {time_consumed} seconds, Memory: {mem_consumed} MB\n")
+            file.write(f"Path: {path}\n\n")
+            
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
