@@ -1,12 +1,17 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QFileDialog, QComboBox
-import sys
+import sys, collections
 
 from components.resource_holder import ResourceHolder
 from components.map import VisualMap
 from src.map_data import MapData
 from src.algorithms.base_algo import BaseAlgo
+from src.algorithms.a_star import AStar
+
+from PyQt6.QtCore import QTimer
 
 class App(QMainWindow):
+    DELAY_STEP = 500
+
     def __init__(self):
         super().__init__()
 
@@ -14,7 +19,11 @@ class App(QMainWindow):
         self.resource_holder.load_images()
         self.map_data = MapData()
 
+        self.moves = collections.deque()
+
         self.initUI()
+
+        # self.test_move()
 
     def initUI(self):
         self.setWindowTitle("Algorithm Visualization")
@@ -62,9 +71,10 @@ class App(QMainWindow):
 
     def display_map(self):
         # Remove the previous VisualMap widget if it exists
-        if self.visualization_map:
-            self.layout.removeWidget(self.visualization_map)
+        if self.visualization_map is not None:
+            self.central_widget.layout().removeWidget(self.visualization_map)
             self.visualization_map.deleteLater()
+            self.visualization_map = None
 
         # Set the dimensions for the VisualMap based on the current window size
         total_width = self.width()
@@ -72,11 +82,15 @@ class App(QMainWindow):
 
         # Create a new VisualMap with the map data and calculated dimensions
         self.visualization_map = VisualMap(self.map_data, total_width, total_height)
+        self.central_widget.layout().addWidget(self.visualization_map)
 
         # Set the background color of VisualMap to white
         self.visualization_map.setStyleSheet("background-color: white;")
 
         self.layout.insertWidget(1, self.visualization_map)  # Insert after file button
+
+        self.visualization_map.update()
+        self.update()
 
     def choose_file(self):
         file_dialog = QFileDialog()
@@ -99,19 +113,51 @@ class App(QMainWindow):
         map_data = [list(line.strip('\n')) for line in content[1:]]
 
         self.map_data.set_map_matrix(map_data, stones)
+
+    def push_moves(self, moves_list: list):
+        moves_list = [move.lower() for move in moves_list]
+        self.moves.extend(moves_list)
+
+    def reset_moves(self):
+        self.moves.clear()
+
+    def run_moves(self):
+        if len(self.moves) == 0:
+            return
+
+        move = self.moves.popleft()
+        self.map_data.move(move)
+        self.display_map()
+
+        QTimer.singleShot(self.DELAY_STEP, self.run_moves)
     
     def start_visualization(self):
         selected_algo = self.algo_dropdown.currentText()
         print(f"Starting visualization with {selected_algo}")
 
-        self.algo.set_map(self.map_matrix)
-        self.algo.run()
+        # self.algo.set_map(self.map_matrix)
+        # self.algo.run()
 
-        # Get the updated map data after running the algorithm
-        updated_map_data = self.algo.get_map()
+        # # Get the updated map data after running the algorithm
+        # updated_map_data = self.algo.get_map()
 
-        # Display the updated map data
-        self.display_map(updated_map_data.convert_display_map())
+        # # Display the updated map data
+        # self.display_map(updated_map_data.get_display_map())
+
+        if selected_algo == "A*":
+            astar = AStar()
+            astar.set_map(self.map_data.copy())
+            astar.run()
+            path, maps, total_w = astar.get_path()
+            time_consumed, mem_consumed, num_explored = astar.get_stats()
+            print(f"Path: {path}")
+            print(f"Total weight: {total_w}")
+            print(f"Time consumed: {time_consumed} seconds")
+            print(f"Memory consumed: {mem_consumed} MB")
+            print(f"Number of explored nodes: {num_explored}")
+
+            self.push_moves(path)
+            QTimer.singleShot(0, self.run_moves)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
