@@ -67,6 +67,8 @@ class UCS(BaseAlgo):
                     node_new = Node(hash_new, node_current)
                     node_new.f = f + c
                     node_new.previous_move = move
+                    if c > 1:
+                        node_new.previous_move = move.upper()
                     self.node_dict[hash_new] = node_new
                     heapq.heappush(open_list, (node_new.f, hash_new))
                 else:
@@ -75,6 +77,8 @@ class UCS(BaseAlgo):
                         node_new.f = f + c
                         node_new.parent = node_current
                         node_new.previous_move = move
+                        if c > 1:
+                            node_new.previous_move = move.upper()
                         heapq.heappush(open_list, (node_new.f, hash_new))
 
         return False
