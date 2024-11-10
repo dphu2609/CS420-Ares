@@ -88,6 +88,9 @@ class MapData:
     def get_stones(self):
         return self.weigh_stones, self.position_stones
     
+    def get_stones_weight(self):
+        return self.weigh_stones[1:]
+    
     def get_switches(self):
         return self.position_switches
     
