@@ -10,7 +10,7 @@ from src.algorithms.algo_dict import ALGORITHMS_DICT
 from PyQt6.QtCore import QTimer
 
 class App(QMainWindow):
-    DELAY_STEP = 500
+    DELAY_STEP = 100
     OUTPUT_DIR = "./output"
 
     def __init__(self):
@@ -138,6 +138,12 @@ class App(QMainWindow):
 
     def run_moves(self):
         if len(self.moves) == 0:
+            self.start_button.setText("Restart Visualization")
+            self.start_button.repaint()  # Update the GUI immediately
+            return
+        
+        if self.moves[0] == "paused":
+            QTimer.singleShot(self.DELAY_STEP, self.run_moves)
             return
 
         move = self.moves.popleft()
@@ -147,6 +153,27 @@ class App(QMainWindow):
         QTimer.singleShot(self.DELAY_STEP, self.run_moves)
     
     def start_visualization(self):
+        # Get the current text of the start button
+        button_text = self.start_button.text()
+        if button_text == "Pause":
+            self.start_button.setText("Resume")
+            self.start_button.repaint()
+            if len(self.moves) == 0 or self.moves[0] != "paused":
+                self.moves.appendleft("paused")
+            return
+        if button_text == "Resume":
+            self.start_button.setText("Pause")
+            self.start_button.repaint()
+            self.moves.popleft()
+            return
+        if button_text == "Restart Visualization":
+            self.parse_map(self.input_file_name)
+            self.display_map()
+            self.reset_moves()
+            self.start_button.setText("Start Visualization")
+            self.start_button.repaint()
+            return
+
         selected_algo = self.algo_dropdown.currentText()
         print(f"Starting visualization with {selected_algo}")
         # Change the button text to "Analyzing..."
@@ -155,7 +182,7 @@ class App(QMainWindow):
 
         self.run_algo(ALGORITHMS_DICT[selected_algo], selected_algo)
 
-        self.start_button.setText("Start Visualization")
+        self.start_button.setText("Pause")
         self.start_button.repaint()  # Update the GUI immediately
 
 
