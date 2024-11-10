@@ -93,7 +93,6 @@ class UCS(BaseAlgo):
             maps.append(self.game_state_dict[current].get_display_map())
             current = self.node_dict[current].parent.current
 
-        print(f"Path: {path}")
         return path[::-1], maps[::1], self.node_dict[self.goal_hash].f
     
     def get_stats(self):
